@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Cakemanny.FIQL
 {
-    public class Parser2
+    public class Parser
     {
         private Symbol sym;
         private string data;
@@ -16,7 +16,7 @@ namespace Cakemanny.FIQL
 
         private readonly IEnumerator<Token> tokenEnumerator;
 
-        public Parser2(IEnumerable<Token> tokens)
+        public Parser(IEnumerable<Token> tokens)
         {
             this.tokenEnumerator = tokens.GetEnumerator();
         }

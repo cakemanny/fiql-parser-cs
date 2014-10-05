@@ -45,7 +45,7 @@
     <Compile Include="FIQLParser.cs" />
     <Compile Include="Lexer.cs" />
     <Compile Include="LexException.cs" />
-    <Compile Include="Parser2.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="ParseException.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="SQLGenerator.cs" />
