@@ -41,6 +41,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ast.cs" />
+    <Compile Include="AstException.cs" />
+    <Compile Include="FIQLParser.cs" />
+    <Compile Include="Lexer.cs" />
+    <Compile Include="LexException.cs" />
+    <Compile Include="Parser2.cs" />
+    <Compile Include="ParseException.cs" />
+    <Compile Include="Symbol.cs" />
+    <Compile Include="SQLGenerator.cs" />
+    <Compile Include="Token.cs" />
+    <Compile Include="Visitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
