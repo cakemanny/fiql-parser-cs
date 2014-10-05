@@ -53,9 +53,10 @@ namespace Cakemanny.FIQL
 
         public class Predicate : BooleanFactor
         {
-            internal Identifier ident;
-            internal Operator op;
-            internal Value rvalue;
+            // TODO: Correct the casing on all properties and methods!
+            public Identifier ident { get; internal set; }
+            public Operator op { get; internal set; }
+            public Value rvalue { get; internal set; }
 
             public Predicate() : base(new Token(Symbol.none, ""))
             {}

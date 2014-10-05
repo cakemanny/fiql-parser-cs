@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Cakemanny.FIQL
 {
-    class Lexer
+    public class Lexer
     {
         private readonly string characters;
         private int pos = 0;
@@ -13,12 +13,12 @@ namespace Cakemanny.FIQL
 
         public event Action<String> trace = msg => { };
 
-        internal Lexer(string characters)
+        public Lexer(string characters)
         {
             this.characters = characters;
         }
 
-        internal List<Token> lex()
+        public List<Token> lex()
         {
             var result = new List<Token>();
             while (!eof()) {
@@ -33,45 +33,45 @@ namespace Cakemanny.FIQL
             return result;
         }
 
-        bool eof()
+        private bool eof()
         {
             return pos >= characters.Length;
         }
 
-        char peekChar()
+        private char peekChar()
         {
             return !eof() ? characters[pos] : '\0';
         }
 
-        char readChar()
+        private char readChar()
         {
             return !eof() ? characters[pos++] : '\0';
         }
 
-        char next()
+        private char next()
         {
             ++pos;
             return (pos < characters.Length) ? characters[pos] : '\0';
         }
 
-        LexException error(string message)
+        private LexException error(string message)
         {
             return new LexException(message, characters, pos);
         }
 
-        bool isDigit(char c)
+        private bool isDigit(char c)
         {
             return c >= '0' && c <= '9';
         }
 
-        bool isAlpha(char c) {
+        private bool isAlpha(char c) {
             return (c >= 'a' && c <= 'z')
                     || (c >= 'A' && c <= 'Z')
                     || c == '_'
                     || c == '$';
         }
 
-        bool isAlphaNum(char c) {
+        private bool isAlphaNum(char c) {
             return (c >= 'a' && c <= 'z')
                     || (c >= 'A' && c <= 'Z')
                     || (c >= '0' && c <= '9')
@@ -79,18 +79,18 @@ namespace Cakemanny.FIQL
                     || c == '$';
         }
 
-        bool isString(char c) {
+        private bool isString(char c) {
             return !(c == '=' || c == '*' || c == '(' || c == ')' ||
                         c == '!' || c == ',' || c == ';' || c =='\'' ||
                         c == '\0');
         }
 
-        bool isWild(char c) {
+        private bool isWild(char c) {
             return c == '*' || isString(c);
         }
 
-        Token readToken() {
-            String data = "";
+        private Token readToken() {
+            StringBuilder data = new StringBuilder("");
             int start = pos;
             char c = peekChar();
 
@@ -155,10 +155,10 @@ namespace Cakemanny.FIQL
                         if (isAlpha(c)) {
                             // identifier or string
                             while (isAlphaNum(c)) {
-                                data += c;
+                                data.Append(c);
                                 c = next();
                             }
-                            return new Token(Symbol.ident, data);
+                            return new Token(Symbol.ident, data.ToString());
                         } else {
                             throw error("Expected identifier here");
                         }
@@ -169,16 +169,16 @@ namespace Cakemanny.FIQL
             }
         }
 
-        private Token readValue(string data, int start, char c) {
+        private Token readValue(StringBuilder data, int start, char c) {
             if (isDigit(c)) {
                 // process date
                 // process number
                 while (isDigit(c)) {
-                    data += c;
+                    data.Append(c);
                     c = next();
                 }
                 if (c == '-' && (pos - start) == 4) { // date
-                    data += c;
+                    data.Append(c);
                     c = next();
                     if (isDigit(c) && isDigit(next())
                             && '-' == next()
@@ -188,7 +188,7 @@ namespace Cakemanny.FIQL
                     }
                     throw error("Incorrectly formatted date, expected yyyy-mm-dd");
                 } else if (!isWild(c)) {
-                    return new Token(Symbol.number, data);
+                    return new Token(Symbol.number, data.ToString());
                 } else {
                     return readWild(data, start, c);
                 }
@@ -199,7 +199,7 @@ namespace Cakemanny.FIQL
             }
         }
 
-        private Token readWild(string data, int start, char c) {
+        private Token readWild(StringBuilder data, int start, char c) {
                 bool boolean = true, stringtype = true;
                 // process bool
                 // process string
@@ -208,20 +208,20 @@ namespace Cakemanny.FIQL
                 char[] tru = {'t','r','u','e'};
                 char[] fals = {'f','a','l','s','e'};
                 if (c == 't') while (x < 4 && c == tru[x++]) {
-                    data += c; c = next();
+                    data.Append(c); c = next();
                 }
                 else if (c == 'f') while (x < 5 && c == fals[x++]) {
-                    data += c; c = next();
+                    data.Append(c); c = next();
                 }
                 while (isWild(c)) {
                     boolean = false;
                     stringtype = stringtype && (c != '*');
-                    data += c;
+                    data.Append(c);
                     c = next();
                 }
-                return boolean ? new Token(Symbol.boolean, data)
-                        : stringtype ? new Token(Symbol.stringtype, data)
-                        : new Token(Symbol.wildstring, data);
+                return boolean ? new Token(Symbol.boolean, data.ToString())
+                        : stringtype ? new Token(Symbol.stringtype, data.ToString())
+                        : new Token(Symbol.wildstring, data.ToString());
         }
 
     }
