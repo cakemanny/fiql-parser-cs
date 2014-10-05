@@ -87,5 +87,31 @@ namespace Cakemanny.FIQL.Tests
             string expected = "(ip_address LIKE '192.168.%')";
             Assert.That(parser.parseQuery(input), Is.EqualTo(expected));
         }
+
+        [Test]
+        public void AcceptsMultipleParensAtFront()
+        {
+            string input = "((ip_address==1),ip_address==2),ip_address==3";
+            string expected = "(((ip_address = 1) OR ip_address = 2) OR ip_address = 3)";
+            Assert.That(parser.parseQuery(input), Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CanHandleSuperLongInput_2048Chars()
+        {
+            // The max queryString length on IIS is by default 2048
+            // Let's check whether we can overflow the stack with that sort
+            // of space
+            string input = new String('(', 2048);
+            try
+            {
+                parser.parseQuery(input);
+                Assert.Fail("Expected a ParseException");
+            }
+            catch (ParseException e)
+            {
+                Assert.That(e.Message, Is.EqualTo("predicate: must start with identifier"));
+            }
+        }
     }
 }
